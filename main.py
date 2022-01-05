@@ -1,15 +1,14 @@
 # venv activation (bash)
 # source ./env/Scripts/activate
-from logging import debug
 from flask import Flask, render_template, request
 from dotenv import dotenv_values
+from requests.sessions import session
+from werkzeug.utils import redirect
 import requests 
 import base64
 import os 
 import hashlib
-
-from requests.sessions import session
-from werkzeug.utils import redirect
+import json
 
 app = Flask(__name__)
 
@@ -19,7 +18,7 @@ CLIENT_SECRET = config.get('CLIENT_SECRET')
 REDIRECT_URI = config.get('REDIRECT_URI')
 
 scopes = [
-    'ugc-image-upload',
+    'user-read-private',
     'user-read-email',
     'user-top-read',
     'user-read-recently-played'
@@ -74,16 +73,35 @@ def getToken():
     r = requests.post(req_token_url, params=payload, headers=header)
     if r.status_code != 200: 
         # print(f'error: {r.status_code}')
-        return f'<h1>{r.status_code}</h1>'
+        return f'<h1>User not authenticated</h1><p>Error code {r.status_code}</p>'
     
     r.raise_for_status()
-    session['token'] = r.json()['access_token'] 
-    print(session['token'])
+    getToken.access_token = r.json()['access_token']
+    # return f'<h2>{getToken.access_token}</h2>'
     return redirect('/user')
-
+    
 @app.route('/user')
 def userPage():
-    return 'Welcome'
+    user_url = 'https://api.spotify.com/v1/me'
+    header = {
+        'Content-Type': 'application/json',
+        'Authorization': f'Bearer {getToken.access_token}'
+    }
+    r = requests.get(user_url, headers=header)
+    if r.status_code != 200:
+        return f'<h1>Error {r.status_code}</h1>'
+    
+    r.raise_for_status()
+    pretty_res = json.loads(r.text)
+    
+    # render user info 
+    return render_template(
+        'user.html',
+        title = 'User authenticated', 
+        access_token = getToken.access_token,
+        user_info = json.dumps(pretty_res, indent=2),
+        username = r.json()['display_name']
+        ) 
 
 # authUser()
 # getToken(code)
