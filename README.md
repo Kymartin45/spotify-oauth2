@@ -26,7 +26,7 @@ redirect_uri = {SPOTIFY_REDIRECT_URI}
 
 Create `.env` file in root directory 
 
-```dosini
+```bash
 SPOTIFY_CLIENT_ID=
 SPOTIFY_CLIENT_ID=
 SPOTIFY_REDIRECT_URI=
