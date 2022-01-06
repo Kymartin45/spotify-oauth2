@@ -1,5 +1,6 @@
 # venv activation (bash)
 # source ./env/Scripts/activate
+from re import L
 from flask import Flask, render_template, request
 from dotenv import dotenv_values
 from werkzeug.utils import redirect
@@ -71,7 +72,6 @@ def getToken():
     }
     r = requests.post(req_token_url, params=payload, headers=header)
     if r.status_code != 200: 
-        # print(f'error: {r.status_code}')
         return f'<h1>User not authenticated</h1><p>Error code {r.status_code}</p>'
     
     r.raise_for_status()
@@ -92,6 +92,7 @@ def userPage():
     
     r.raise_for_status()
     pretty_res = json.loads(r.text)
+    userPage.user_id = r.json()['id']
     
     # render user info 
     return render_template(
@@ -99,11 +100,37 @@ def userPage():
         title = 'User authenticated', 
         access_token = getToken.access_token,
         user_info = json.dumps(pretty_res, indent=2),
-        username = r.json()['display_name']
+        username = r.json()['display_name'],
+        user_id = r.json()['id']
         ) 
 
-# authUser()
-# getToken(code)
+@app.route('/user/playlists')
+def getUserPlaylists():
+    user_playlist_url = f'https://api.spotify.com/v1/users/{userPage.user_id}/playlists'
+    header = {
+        'Content-Type': 'application/json',
+        'Authorization': f'Bearer {getToken.access_token}'
+    }
+    payload = {
+        'limit': 20,
+        'offset': 0 
+    }
+    r = requests.get(user_playlist_url, params=payload ,headers=header)
+    json_items = json.loads(r.text)
+    # userPlaylists = json.dumps(json_items, indent=2) # pretty json object 
+    
+    # get user display name
+    for name in json_items['items']:
+        user = name['owner']['display_name']
+        
+    for p_name in json_items['items']:
+        playlist_name = p_name['name']
+            
+    return render_template(
+        'userPlaylists.html',
+        playlists = playlist_name,
+        username = user
+    )
 
 def refreshAccessToken():
     refresh_token = 'https://accounts.spotify.com/api/token'
