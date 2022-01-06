@@ -2,7 +2,6 @@
 # source ./env/Scripts/activate
 from flask import Flask, render_template, request
 from dotenv import dotenv_values
-from requests.sessions import session
 from werkzeug.utils import redirect
 import requests 
 import base64
@@ -13,9 +12,9 @@ import json
 app = Flask(__name__)
 
 config = dotenv_values('.env')
-CLIENT_ID = config.get('CLIENT_ID')
-CLIENT_SECRET = config.get('CLIENT_SECRET')
-REDIRECT_URI = config.get('REDIRECT_URI')
+CLIENT_ID = config.get('SPOTIFY_CLIENT_ID')
+CLIENT_SECRET = config.get('SPOTIFY_CLIENT_SECRET')
+REDIRECT_URI = config.get('SPOTIFY_REDIRECT_URI')
 
 scopes = [
     'user-read-private',
@@ -127,3 +126,4 @@ def refreshAccessToken():
 
 if __name__ == '__main__':
     app.run(debug=True)
+    
