@@ -1,40 +1,23 @@
 # Connect to Spotify API endpoints 
-Sample code for OAuth 2.0 Authorization Code Flow with PKCE 
+Sample code for OAuth 2.0 Authorization Code Flow with PKCE on a Flask server
 
 * [Spotify Documentation](https://developer.spotify.com/documentation/)
+* [Spotify console to explore endpoints](https://developer.spotify.com/console/)
 * [OAuth 2 Auth Code Flow with PKCE](https://developer.spotify.com/documentation/general/guides/authorization/code-flow/)
 * [Flask web application framework](https://github.com/pallets/flask)
-* [Spotify console to explore endpoints](https://developer.spotify.com/console/)
 
-## Installing (Python 3+)
-*Built on 3.10.1* 
-Install using pip 
+## Installing
+*Built on Python 3.10.1* 
 
-```bash 
-pip install requests
-pip install python-dotenv
-pip install flask
-```
-
-Install necessary packages
+Clone the repo and install necessary packages using pip:
 ```bash
 pip install -r requirements.txt
 ```
 
-### Usage
-Set up environment variables for your Spotify project. You can find your credentials in your [Spotify Dashboard](https://developer.spotify.com/dashboard/)
+## Usage
+Get started quickly by following these steps:
 
-```python 
-client_id = {SPOTIFY_CLIENT_ID}
-client_secret = {SPOTIFY_CLIENT_SECRET}
-redirect_uri = {SPOTIFY_REDIRECT_URI}
-```
-
-Create `.env` file in root directory 
-
-```bash
-SPOTIFY_CLIENT_ID=
-SPOTIFY_CLIENT_ID=
-SPOTIFY_REDIRECT_URI=
-```
-
+1. Setup your Spotify developer account at the [Spotify Dashboard](https://developer.spotify.com/dashboard/). Take note of the credentials provided.
+2. Supply the values in `.env.example` and rename it to `.env`.
+3. Start the server by running `python3 main.py`
+4. Visit `localhost:8080` and try it out!
