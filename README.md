@@ -16,6 +16,11 @@ pip install python-dotenv
 pip install flask
 ```
 
+Install necessary packages
+```bash
+pip install -r requirements.txt
+```
+
 ### Usage
 Set up environment variables for your Spotify project. You can find your credentials in your [Spotify Dashboard](https://developer.spotify.com/dashboard/)
 
@@ -32,3 +37,4 @@ SPOTIFY_CLIENT_ID=
 SPOTIFY_CLIENT_ID=
 SPOTIFY_REDIRECT_URI=
 ```
+
