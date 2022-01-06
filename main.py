@@ -1,9 +1,8 @@
 # venv activation (bash)
 # source ./env/Scripts/activate
-from re import L
 from flask import Flask, render_template, request
-from dotenv import dotenv_values
 from werkzeug.utils import redirect
+from dotenv import dotenv_values
 import requests 
 import base64
 import os 
@@ -76,7 +75,6 @@ def getToken():
     
     r.raise_for_status()
     getToken.access_token = r.json()['access_token']
-    # return f'<h2>{getToken.access_token}</h2>'
     return redirect('/user')
     
 @app.route('/user')
@@ -104,6 +102,7 @@ def userPage():
         user_id = r.json()['id']
         ) 
 
+# get user playlists
 @app.route('/user/playlists')
 def getUserPlaylists():
     user_playlist_url = f'https://api.spotify.com/v1/users/{userPage.user_id}/playlists'
@@ -112,25 +111,32 @@ def getUserPlaylists():
         'Authorization': f'Bearer {getToken.access_token}'
     }
     payload = {
-        'limit': 20,
+        'limit': 20, # default (potentially add user input to change)
         'offset': 0 
     }
     r = requests.get(user_playlist_url, params=payload ,headers=header)
-    json_items = json.loads(r.text)
-    # userPlaylists = json.dumps(json_items, indent=2) # pretty json object 
-    
-    # get user display name
-    for name in json_items['items']:
+    # json_data = r.text
+    data = r.json()
+    # jsonObj = json.loads(json_data)
+    # jsonStr = json.dumps(jsonObj, indent=2)
+
+    for name in r.json()['items']:
         user = name['owner']['display_name']
+    
+    # loop for playlist `id` 
+    dataItems = data['items']
+    for i in dataItems:
+        if i['id'] == i['id']:
+            print(i['id'])
+
+    # playlist_cover_img = f'https://api.spotify.com/v1/playlists/{playlist_id}/images'
+    # req = requests.get(playlist_cover_img, headers=header)
         
-    for p_name in json_items['items']:
-        playlist_name = p_name['name']
-            
     return render_template(
         'userPlaylists.html',
-        playlists = playlist_name,
-        username = user
-    )
+        username = user,
+        playlists = r.json()['items'] # loop /w flask templates    
+        )
 
 def refreshAccessToken():
     refresh_token = 'https://accounts.spotify.com/api/token'
