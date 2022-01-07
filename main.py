@@ -123,19 +123,18 @@ def getUserPlaylists():
     for name in r.json()['items']:
         user = name['owner']['display_name']
     
-    # loop for playlist `id` 
-    dataItems = data['items']
-    for i in dataItems:
+    # loop for playlist `id` (TEMPORARY)
+    getUserPlaylists.dataItems = r.json()['items']
+    for i in getUserPlaylists.dataItems:
         if i['id'] == i['id']:
-            print(i['id'])
-
-    # playlist_cover_img = f'https://api.spotify.com/v1/playlists/{playlist_id}/images'
-    # req = requests.get(playlist_cover_img, headers=header)
-        
+            playlistID = i['id']
+            print(f'{playlistID}: playlistID')
+                    
     return render_template(
         'userPlaylists.html',
         username = user,
-        playlists = r.json()['items'] # loop /w flask templates    
+        playlists = r.json()['items'], # loop /w flask templates    
+        playlist_id = playlistID
         )
 
 def refreshAccessToken():
