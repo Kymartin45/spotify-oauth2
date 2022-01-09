@@ -1,6 +1,8 @@
 # venv activation (bash)
 # source ./env/Scripts/activate
+import enum
 from flask import Flask, render_template, request
+from requests.api import head
 from werkzeug.utils import redirect
 from dotenv import dotenv_values
 import requests 
@@ -115,26 +117,23 @@ def getUserPlaylists():
         'offset': 0 
     }
     r = requests.get(user_playlist_url, params=payload ,headers=header)
-    # json_data = r.text
     data = r.json()
-    # jsonObj = json.loads(json_data)
-    # jsonStr = json.dumps(jsonObj, indent=2)
 
     for name in r.json()['items']:
         user = name['owner']['display_name']
     
-    # loop for playlist `id` (TEMPORARY)
-    getUserPlaylists.dataItems = r.json()['items']
-    for i in getUserPlaylists.dataItems:
-        if i['id'] == i['id']:
-            playlistID = i['id']
-            print(f'{playlistID}: playlistID')
-                    
+    map_id = map(lambda playlist : playlist['id'], data['items'])
+    playlist_ids = list(map_id)
+    
+    for playlist_id in playlist_ids:
+        playlist_cover = f"https://api.spotify.com/v1/playlists/{playlist_id}/images"
+        req_image = requests.get(playlist_cover, headers=header)
+        print(req_image.url) 
+        
     return render_template(
         'userPlaylists.html',
         username = user,
-        playlists = r.json()['items'], # loop /w flask templates    
-        playlist_id = playlistID
+        playlists = r.json()['items']
         )
 
 def refreshAccessToken():
