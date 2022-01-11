@@ -1,8 +1,6 @@
 # venv activation (bash)
 # source ./env/Scripts/activate
-import enum
 from flask import Flask, render_template, request
-from requests.api import head
 from werkzeug.utils import redirect
 from dotenv import dotenv_values
 import requests 
@@ -124,16 +122,24 @@ def getUserPlaylists():
     
     map_id = map(lambda playlist : playlist['id'], data['items'])
     playlist_ids = list(map_id)
-    
-    for playlist_id in playlist_ids:
-        playlist_cover = f"https://api.spotify.com/v1/playlists/{playlist_id}/images"
-        req_image = requests.get(playlist_cover, headers=header)
-        print(req_image.url) 
+ 
+    img_list = []
+    for id in playlist_ids:
+        playlist_cover = f"https://api.spotify.com/v1/playlists/{id}/images"
+        req = requests.get(playlist_cover, headers=header)
+        cover_data = req.json()
         
+        map_id = map(lambda ids : ids['url'], cover_data)
+        images = list(map_id)
+        img_list.append(images)
+    # print(img_list[0][0])
+    # print(img_list[1][0])
+                
     return render_template(
         'userPlaylists.html',
         username = user,
-        playlists = r.json()['items']
+        playlists = r.json()['items'],
+        playlist_cover  = img_list[0][0]
         )
 
 def refreshAccessToken():
@@ -153,8 +159,6 @@ def refreshAccessToken():
     print(r.json()) 
     refreshAccessToken.new_access_token = r.json()['access_token'] # new access token if requested refresh
     
-# refreshAccessToken()
-
 if __name__ == '__main__':
     app.run(debug=True, port=8080)
     
