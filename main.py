@@ -90,15 +90,15 @@ def userPage():
     
     r.raise_for_status()
     pretty_res = json.loads(r.text)
+    userPage.display_name = r.json()['display_name']
     userPage.user_id = r.json()['id']
-    
-    # render user info 
+        
     return render_template(
         'user.html',
         title = 'User authenticated', 
         access_token = getToken.access_token,
         user_info = json.dumps(pretty_res, indent=2),
-        username = r.json()['display_name'],
+        username = userPage.display_name,
         user_id = r.json()['id']
         ) 
 
@@ -111,36 +111,52 @@ def getUserPlaylists():
         'Authorization': f'Bearer {getToken.access_token}'
     }
     payload = {
-        'limit': 20, # default (potentially add user input to change)
+        'limit': 20, 
         'offset': 0 
     }
     r = requests.get(user_playlist_url, params=payload ,headers=header)
-    data = r.json()
-
-    for name in r.json()['items']:
-        user = name['owner']['display_name']
+    data = json.loads(r.text)
+    playlists = data['items']
     
-    map_id = map(lambda playlist : playlist['id'], data['items'])
-    playlist_ids = list(map_id)
- 
-    img_list = []
-    for id in playlist_ids:
-        playlist_cover = f"https://api.spotify.com/v1/playlists/{id}/images"
-        req = requests.get(playlist_cover, headers=header)
-        cover_data = req.json()
+    playlist_data = []
+    for playlist in playlists:
+        playlist_data.append({
+            'playlist_name': playlist['name'],
+            'playlist_url': playlist['external_urls']['spotify'],
+            'playlist_image': playlist['images'][0]['url'],
+            'playlist_tracks_url': playlist['tracks']['href'],
+            'playlist_id': playlist['id']
+        })    
         
-        map_id = map(lambda ids : ids['url'], cover_data)
-        images = list(map_id)
-        img_list.append(images)
-    # print(img_list[0][0])
-    # print(img_list[1][0])
-                
+    # map_id = map(lambda playlist : playlist['id'], playlist_data['items'])
+    # playlist_ids = list(map_id)
+ 
+    # img_list = []
+    # for id in playlist_ids:
+    #     playlist_cover = f"https://api.spotify.com/v1/playlists/{id}/images"
+    #     req = requests.get(playlist_cover, headers=header)
+    #     cover_data = req.json()
+        
+    #     map_id = map(lambda ids : ids['url'], cover_data)
+    #     images = list(map_id)
+    #     img_list.append(images)
+    
+    # image_url = []
+    # for i, j in enumerate(img_list):
+    #     print(i, j[0])
+    #     image_url.append(j[0])
+                                        
     return render_template(
         'userPlaylists.html',
-        username = user,
-        playlists = r.json()['items'],
-        playlist_cover  = img_list[0][0]
+        username = userPage.display_name,
+        playlist_data = playlist_data
         )
+
+def getPlaylistTracks(playlist_id):
+    track_url = f'  https://accounts.spotify.com/v1/playlists/{playlist_id}/tracks'
+    headers = { 'Content-Type': 'application/json' }
+    req = requests.get(track_url, headers=headers)
+    data = json.loads(req.text)
 
 def refreshAccessToken():
     refresh_token = 'https://accounts.spotify.com/api/token'
