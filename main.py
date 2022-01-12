@@ -126,37 +126,48 @@ def getUserPlaylists():
             'playlist_image': playlist['images'][0]['url'],
             'playlist_tracks_url': playlist['tracks']['href'],
             'playlist_id': playlist['id']
-        })    
-        
+        })
+    
+    map_ids = map(lambda ids: ids['id'], playlists)   
+    ids = list(map_ids)
+    print(ids)
+    
+    # track_url = f'https://api.spotify.com/v1/playlists/{ids[0]}/tracks'
+    # req_track = requests.get(track_url, headers=header)
+    # track_data = json.loads(req_track.text)['items']
+    
+    # TEMPORARY BELOW (WIP) - get tracks among each playlist given their playlist_id {id}
+    tracks = []
+    for id in ids:
+        track_url = f'https://api.spotify.com/v1/playlists/{id}/tracks'
+        req_track = requests.get(track_url, headers=header)
+        track_data = json.loads(req_track.text)['items']
+        for track in track_data:
+            tracks.append({
+                'track_name': track['track']['name'],
+                'track_artist': track['track']['artists'][0]['name'],
+                'track_image': track['track']['album']['images'][0]['url'],
+                'track_url': track['track']['external_urls']['spotify'],
+                'track_id': track['track']['id']
+            })
+
+    # tracks = []
+    # for track in track_data:
+    #     tracks.append({
+    #         'track_name': track['track']['name'],
+    #         'track_artist': track['track']['artists'][0]['name']
+    #     })
+    # print(tracks)
+    
     # map_id = map(lambda playlist : playlist['id'], playlist_data['items'])
     # playlist_ids = list(map_id)
- 
-    # img_list = []
-    # for id in playlist_ids:
-    #     playlist_cover = f"https://api.spotify.com/v1/playlists/{id}/images"
-    #     req = requests.get(playlist_cover, headers=header)
-    #     cover_data = req.json()
-        
-    #     map_id = map(lambda ids : ids['url'], cover_data)
-    #     images = list(map_id)
-    #     img_list.append(images)
-    
-    # image_url = []
-    # for i, j in enumerate(img_list):
-    #     print(i, j[0])
-    #     image_url.append(j[0])
                                         
     return render_template(
         'userPlaylists.html',
         username = userPage.display_name,
-        playlist_data = playlist_data
+        playlist_data = playlist_data,
+        tracks = tracks
         )
-
-def getPlaylistTracks(playlist_id):
-    track_url = f'  https://accounts.spotify.com/v1/playlists/{playlist_id}/tracks'
-    headers = { 'Content-Type': 'application/json' }
-    req = requests.get(track_url, headers=headers)
-    data = json.loads(req.text)
 
 def refreshAccessToken():
     refresh_token = 'https://accounts.spotify.com/api/token'
