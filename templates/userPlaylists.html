@@ -4,14 +4,21 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{username}}'s Playlists</title>
-    <div id="userPlaylists">
-        <pre>
-            <h2>{{username}}'s Playlists</h2>
-                <!-- Loop playlist names and print as list (WIP) -->
-                {% for i in playlists %}
-                <li>{{i['name']}} - {{playlist_id}}</li>
-                {% endfor %}
-        </pre>
+    <div id="userPlaylists">        
+        <h2>{{username}}'s Playlists</h2>
+        <p>You have {{ playlist_data|length }} custom playlists</p>
+        <p><strong>Explore each playlist!</strong></p>
+            {% for playlist in playlist_data %}
+                {% set playlist_id = playlist['playlist_id'] %}
+                {% set playlist_name = playlist['playlist_name'] %}
+                {% set playlist_image = playlist['playlist_image'] %}                
+                <li data-toggle="collapse"  class="list-playlist-data">
+                    <span>{{ playlist_name }}</span>
+                    <div>
+                        <img src="{{ playlist_image }}" style="max-width: 80px;" alt="">
+                    </div>
+                </li>
+            {% endfor %}
     </div>
 </head>
 <body>
