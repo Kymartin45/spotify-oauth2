@@ -1,7 +1,6 @@
 # venv activation (bash)
 # source ./env/Scripts/activate
-from flask import Flask, render_template, request
-from werkzeug.utils import redirect
+from flask import Flask, render_template, request, redirect
 from dotenv import dotenv_values
 import requests 
 import base64
@@ -90,20 +89,23 @@ class spotifyApiHandle:
             return f'<h1>Error {r.status_code}</h1>'
         
         r.raise_for_status()
-        pretty_res = json.loads(r.text)
+        data = json.loads(r.text)
+        user_image = data['images'][0]['url']
+        user_followers = data['followers']['total']
+        user_product_subscription = data['product']
+        
         spotifyApiHandle.userPage.display_name = r.json()['display_name']
         spotifyApiHandle.userPage.user_id = r.json()['id']
-            
+
         return render_template(
-            'user.html',
-            title = 'User authenticated', 
-            access_token = spotifyApiHandle.getToken.access_token,
-            user_info = json.dumps(pretty_res, indent=2),
+            'user.html', 
+            user_image = user_image,
             username = spotifyApiHandle.userPage.display_name,
-            user_id = r.json()['id']
+            user_followers = user_followers,
+            user_product_subscription = user_product_subscription,
+            show_playlists = '/user/playlists'
             ) 
 
-    # get user playlists
     @app.route('/user/playlists/', methods = ['GET'])
     def getUserPlaylists():
         user_playlist_url = f'https://api.spotify.com/v1/users/{spotifyApiHandle.userPage.user_id}/playlists'
@@ -132,23 +134,6 @@ class spotifyApiHandle:
         map_ids = map(lambda ids: ids['id'], playlists)   
         ids = list(map_ids)
         spotifyApiHandle.getUserPlaylists.playlist_id = ids
-        
-        # track_url = f'https://api.spotify.com/v1/playlists/{ids[0]}/tracks'
-        # req_track = requests.get(track_url, headers=header)
-        # track_data = json.loads(req_track.text)['items']
-        
-        # TEMPORARY BELOW (WIP) - get tracks among each playlist given their playlist_id {id}
-        
-        # tracks = []
-        # for track in track_data:
-        #     tracks.append({
-        #         'track_name': track['track']['name'],
-        #         'track_artist': track['track']['artists'][0]['name']
-        #     })
-        # print(tracks)
-        
-        # map_id = map(lambda playlist : playlist['id'], playlist_data['items'])
-        # playlist_ids = list(map_id)
                                          
         return render_template(
             'userPlaylists.html',
@@ -182,28 +167,6 @@ class spotifyApiHandle:
             username = spotifyApiHandle.userPage.display_name,
             track_data=tracks
         )
-        
-    # @app.route('/user/playlists/', methods=['GET'])
-    # def getPlaylistTracks():
-    #     req_tracks = f'https://api.spotify.com/v1/playlists/{spotifyApiHandle.getUserPlaylists.playlist_id}/tracks'
-    #     header = {
-    #         'Content-Type': 'application/json',
-    #         'Authorization': f'Bearer {spotifyApiHandle.getToken.access_token}'
-    #     }
-    #     r = requests.get(req_tracks, headers=header)
-    #     data = json.loads(r.text)
-    #     track_data = data['items']
-        
-    #     track = []
-    #     for tracks in track_data:
-    #         track.append({
-    #             'track_name': tracks['track']['name']
-    #         })
-    #     print(track)
-        
-    #     return render_template(
-    #         'userPlaylists.html'
-    #     )
 
     def refreshAccessToken():
         refresh_token = 'https://accounts.spotify.com/api/token'
