@@ -1,0 +1,46 @@
+body {
+    background: linear-gradient(149deg, #282828 10%, #c074b2 56%, #8ab5e8 80%) center / cover no-repeat fixed, rgba(249,224,112,0);
+    background-image: linear-gradient(to top, #149c28, #777777);
+}
+
+.user-playlist-list {
+    color: rgba(0, 220, 18, 0.63);
+    text-align: left;
+}
+
+.user-playlist-count {
+    color: rgb(230, 230, 230, 0.63);
+}
+
+.home-content {
+    color: rgba(0, 0, 0, 0.63);
+    text-align: center;
+    font-family: serif;
+    font-size: 20px;
+}
+
+.footer-credits {
+    color: rgba(0, 0, 0, 0.63);
+    padding-top: 100px;
+}
+
+.list-playlist-data {
+    text-align: center;
+}
+
+.greyed {
+    color: rgba(230, 230, 230, 0.63);
+    text-align: center;
+    font-family: serif;
+    font-size: 16px;
+    padding-top: 100px;
+}
+
+div#top-track-list ul {
+    list-style-type: none;
+    padding-top: 10px;
+}
+
+div#top-track-list li {
+    text-align: center;
+}
