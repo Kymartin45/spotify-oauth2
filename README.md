@@ -21,3 +21,4 @@ Get started quickly by following these steps:
 2. Supply the values in `.env.example` and rename it to `.env`.
 3. Start the server by running `python3 main.py`
 4. Visit `localhost:8080` and try it out!
+
