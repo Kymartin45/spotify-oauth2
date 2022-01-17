@@ -10,11 +10,13 @@
     {% for tracks in track_data %}
         {% set track_name = tracks['track_name'] %}
         {% set track_artist = tracks['track_artist'] %}
+        {% set track_url = tracks['track_url'] %}
         <ul>
             <li>
                 <span><strong>{{ track_name }}</strong></span>
                 <p class="track_artist">by {{ track_artist }}</p>
                 <!-- Temporary til I figure out a cleaner way of approaching list of tracks -->
+                <span><p><a class="play-track-link" href="{{ track_url }}">Listen to this track!</a></p></span>
                 <p>-------------------------------------------------------</p>
             </li>
         </ul>
