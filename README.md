@@ -1,4 +1,6 @@
 # Connect to Spotify API endpoints 
+![home-page](https://user-images.githubusercontent.com/61719557/149841389-ec7c3a49-8c50-46ea-806e-bfacdc745d0d.PNG)
+
 Sample code for OAuth 2.0 Authorization Code Flow with PKCE 
 
 * [Spotify Documentation](https://developer.spotify.com/documentation/)
