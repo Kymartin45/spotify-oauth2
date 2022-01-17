@@ -102,3 +102,18 @@ div#top-track-btn button:hover {
     background: rgb(92, 92, 209);
 }
 
+div#user-playlists nav {
+    background: linear-gradient(149deg, #282828 10%, #c074b2 56%, #8ab5e8 80%) center / cover no-repeat fixed, rgba(249,224,112,0);
+    background-image: linear-gradient(to top, #149c28, #777777);
+    float: right;
+}
+
+div#user-playlists button {
+    background: #424242;
+    border-style: none;
+    border: none;
+}
+
+div#user-playlists button:hover {
+    background: rgb(92, 92, 209);
+}
