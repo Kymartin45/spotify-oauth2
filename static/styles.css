@@ -117,3 +117,9 @@ div#user-playlists button {
 div#user-playlists button:hover {
     background: rgb(92, 92, 209);
 }
+
+.play-track-link {
+    color: #ffffff;
+    text-decoration: none;
+}
+
