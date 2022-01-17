@@ -8,6 +8,8 @@ import os
 import hashlib
 import json
 
+from requests.api import head
+
 app = Flask(__name__)
 
 config = dotenv_values('.env')
@@ -141,7 +143,7 @@ class spotifyApiHandle:
             playlist_data = playlist_data
             )
         
-    @app.route('/user/top_tracks', methods=['GET'])
+    @app.route('/user/top_tracks')
     def getTopTracks():
         top_tracks = f'https://api.spotify.com/v1/me/top/tracks'
         header = {
@@ -159,7 +161,8 @@ class spotifyApiHandle:
         for track in track_data:
             tracks.append({
                 'track_artist': track['artists'][0]['name'],
-                'track_name': track['name']
+                'track_name': track['name'],
+                'track_url': track['uri']
             })
             
         return render_template(
@@ -167,6 +170,21 @@ class spotifyApiHandle:
             username = spotifyApiHandle.userPage.display_name,
             track_data=tracks
         )
+    
+    @app.route('/user/search', methods=['GET'])
+    def searchItem():
+        item_types = ','.join(['artist', 'track', 'album'])
+        search_url = 'https://api.spotify.com/v1/search'
+        payload = {
+            'type': item_types,
+            'include_external': 'audio'
+        }
+        header = {
+            'Content-Type': 'application/json',
+            'Authorization': f'Bearer {spotifyApiHandle.getToken.access_token}'
+        }
+        r = requests.get(search_url, headers=header, params=payload)
+        return str(r.url)
 
     def refreshAccessToken():
         refresh_token = 'https://accounts.spotify.com/api/token'
