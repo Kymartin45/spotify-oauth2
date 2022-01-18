@@ -1,5 +1,6 @@
 # venv activation (bash)
 # source ./env/Scripts/activate
+from re import search
 from flask import Flask, render_template, request, redirect
 from dotenv import dotenv_values
 import requests 
@@ -171,12 +172,14 @@ class spotifyApiHandle:
             track_data=tracks
         )
     
-    @app.route('/user/search', methods=['GET'])
+    @app.route('/user/', methods=['GET'])
     def searchItem():
-        item_types = ','.join(['artist', 'track', 'album'])
+        item_types = ['artist', 'track', 'album']
         search_url = 'https://api.spotify.com/v1/search'
+        search = request.args.get("search-results")
         payload = {
-            'type': item_types,
+            'q': search,
+            'type': ','.join(item_types),
             'include_external': 'audio'
         }
         header = {
@@ -184,7 +187,7 @@ class spotifyApiHandle:
             'Authorization': f'Bearer {spotifyApiHandle.getToken.access_token}'
         }
         r = requests.get(search_url, headers=header, params=payload)
-        return str(r.url)
+        return str(r.json())
 
     def refreshAccessToken():
         refresh_token = 'https://accounts.spotify.com/api/token'
