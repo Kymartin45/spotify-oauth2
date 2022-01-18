@@ -1,7 +1,6 @@
 # venv activation (bash)
 # source ./env/Scripts/activate
-from re import search
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, flash
 from dotenv import dotenv_values
 import requests 
 import base64
@@ -9,14 +8,13 @@ import os
 import hashlib
 import json
 
-from requests.api import head
-
 app = Flask(__name__)
 
 config = dotenv_values('.env')
 CLIENT_ID = config.get('SPOTIFY_CLIENT_ID')
 CLIENT_SECRET = config.get('SPOTIFY_CLIENT_SECRET')
 REDIRECT_URI = config.get('SPOTIFY_REDIRECT_URI')
+app.secret_key = config.get('SECRET_KEY')
 
 scopes = [
     'user-read-private',
@@ -176,7 +174,12 @@ class spotifyApiHandle:
     def searchItem():
         item_types = ['artist', 'track', 'album']
         search_url = 'https://api.spotify.com/v1/search'
-        search = request.args.get("search-results")
+        search = request.args.get("search-results").strip()
+        
+        if search == '':
+            flash('Please search for artists, tracks, or albums')
+            return redirect('/user/playlists/', code=302)
+        
         payload = {
             'q': search,
             'type': ','.join(item_types),
