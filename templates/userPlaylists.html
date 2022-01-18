@@ -9,8 +9,13 @@
         integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <div id="user-playlists">        
         <nav class="navbar navbar-light bg-light">
+            
+            {% for message in get_flashed_messages() %}
+                <p>{{ message }}</p>
+            {% endfor %}
+
             <form class="form-inline" method="GET" action="{{ url_for('searchItem') }}">
-                <input name="search-results" class="form-control mr-sm-2" type="search" placeholder="Search"
+                <input name="search-results" class="form-control mr-sm-2" type="search" size="25" placeholder="Artists, Tracks, or Albums"
                     aria-label="Search">
                 <button class="btn btn-primary" type="submit">Search</button>
             </form>
