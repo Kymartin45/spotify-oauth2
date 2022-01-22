@@ -123,3 +123,8 @@ div#user-playlists button:hover {
     text-decoration: none;
 }
 
+.search-results {
+    text-align: center;
+    padding: 15px;
+}
+
