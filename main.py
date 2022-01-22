@@ -172,9 +172,9 @@ class spotifyApiHandle:
     
     @app.route('/user/', methods=['GET'])
     def searchItem():
-        item_types = ['artist', 'track', 'album']
+        item_types = ['track']
         search_url = 'https://api.spotify.com/v1/search'
-        search = request.args.get("search-results").strip()
+        search = request.args.get("search-results").strip().lower()
         
         if search == '':
             flash('Please search for artists, tracks, or albums')
@@ -183,14 +183,35 @@ class spotifyApiHandle:
         payload = {
             'q': search,
             'type': ','.join(item_types),
-            'include_external': 'audio'
+            'include_external': 'audio',
+            'market': 'US',
+            'limit': 10
         }
         header = {
             'Content-Type': 'application/json',
             'Authorization': f'Bearer {spotifyApiHandle.getToken.access_token}'
         }
         r = requests.get(search_url, headers=header, params=payload)
-        return str(r.json())
+        # return str(r.json())
+        data = json.loads(r.text)
+        # return str(data['albums']['items'])
+        search_results = data['tracks']['items']
+        
+        results = []
+        for result in search_results:
+            results.append({
+                'artist_name': result['artists'][0]['name'],
+                'artist_id': result['id'],
+                'album_type': result['album']['album_type'],
+                'track_uri': result['uri'],
+                'track_name': result['name'],
+                'popularity': result['popularity'] # sort search results by popularity 
+            })
+        
+        return render_template(
+            'searchResults.html',
+            search_results = results
+        )
 
     def refreshAccessToken():
         refresh_token = 'https://accounts.spotify.com/api/token'
