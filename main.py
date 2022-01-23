@@ -192,9 +192,7 @@ class spotifyApiHandle:
             'Authorization': f'Bearer {spotifyApiHandle.getToken.access_token}'
         }
         r = requests.get(search_url, headers=header, params=payload)
-        # return str(r.json())
         data = json.loads(r.text)
-        # return str(data['albums']['items'])
         search_results = data['tracks']['items']
         
         results = []
@@ -205,7 +203,7 @@ class spotifyApiHandle:
                 'album_type': result['album']['album_type'],
                 'track_uri': result['uri'],
                 'track_name': result['name'],
-                'popularity': result['popularity'] # sort search results by popularity 
+                'popularity': result['popularity']
             })
         
         return render_template(
