@@ -2,5 +2,5 @@
 /env
 /__pycache__
 /.git
-
+/tests/__pycache__
 
