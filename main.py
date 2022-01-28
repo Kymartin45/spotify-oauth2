@@ -226,8 +226,8 @@ class spotifyApiHandle:
             print(f'error: {r.status_code}')
             return r.close()
         print(r.json()) 
-        spotifyApiHandle.refreshAccessToken.new_access_token = r.json()['access_token'] # new access token if requested refresh
-    
+        spotifyApiHandle.refreshAccessToken.new_access_token = r.json()['access_token'] 
+
 if __name__ == '__main__':
     app.run(debug=True, port=8080)
     
