@@ -3,4 +3,5 @@
 /__pycache__
 /.git
 /tests/__pycache__
+/.pytest_cache
 
