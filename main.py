@@ -1,7 +1,8 @@
 # venv activation (bash)
 # source ./env/Scripts/activate
-from flask import Flask, render_template, request, redirect, flash
+from flask import Flask, render_template, request, redirect, flash, session
 from dotenv import dotenv_values
+from py import code
 import requests 
 import base64
 import os 
@@ -75,7 +76,12 @@ class spotifyApiHandle:
             return f'<h1>User not authenticated</h1><p>Error code {r.status_code}</p>'
         
         r.raise_for_status()
-        spotifyApiHandle.getToken.access_token = r.json()['access_token']
+        
+        session['access_token'] = r.json()['access_token'] # session storage for access token & refresh token
+        session['refresh_token'] = r.json()['refresh_token'] 
+        spotifyApiHandle.getToken.refresh_token = session['refresh_token']
+        spotifyApiHandle.getToken.access_token = session['access_token']
+        
         return redirect('/user')
         
     @app.route('/user', methods=['GET'])
@@ -97,7 +103,7 @@ class spotifyApiHandle:
         
         spotifyApiHandle.userPage.display_name = r.json()['display_name']
         spotifyApiHandle.userPage.user_id = r.json()['id']
-
+        
         return render_template(
             'user.html', 
             user_image = user_image,
@@ -211,6 +217,7 @@ class spotifyApiHandle:
             search_results = results
         )
 
+    @app.route('/auto_refresh', methods=['GET'])
     def refreshAccessToken():
         refresh_token = 'https://accounts.spotify.com/api/token'
         header = {
@@ -225,9 +232,12 @@ class spotifyApiHandle:
         if r.status_code != 200: 
             print(f'error: {r.status_code}')
             return r.close()
-        print(r.json()) 
-        spotifyApiHandle.refreshAccessToken.new_access_token = r.json()['access_token'] 
+        
+        session['access_token'] = r.json()['access_token']
+        spotifyApiHandle.refreshAccessToken.new_access_token = session['access_token'] 
+        return redirect('/user', code=302)
 
 if __name__ == '__main__':
+    app.secret_key = os.urandom(24)
     app.run(debug=True, port=8080)
     
